@@ -109,7 +109,7 @@ public class Bird : MonoBehaviour
     {
         if (!_anchorJoint)
         {
-            Debug.LogError("No anchor connected to bird");
+            Debug.Log("No anchor connected to bird");
             yield break;
         }
 
