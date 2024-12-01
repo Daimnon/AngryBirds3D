@@ -4,7 +4,7 @@
 PlayerSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 28
-  productGUID: fa5b0b5ed05e7294f9c34db1ef66db2f
+  productGUID: 33f021b7bb7115a48bbb4765c50e02c1
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
   AndroidEnableSustainedPerformanceMode: 0
@@ -13,7 +13,7 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: DefaultCompany
-  productName: AngryBirds3DProject
+  productName: AngryBirds3D_Unity
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
@@ -852,14 +852,14 @@ PlayerSettings:
   editorAssembliesCompatibilityLevel: 1
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
-  metroPackageName: AngryBirds3DProject
+  metroPackageName: AngryBirds3D_Unity
   metroPackageVersion: 
   metroCertificatePath: 
   metroCertificatePassword: 
   metroCertificateSubject: 
   metroCertificateIssuer: 
   metroCertificateNotAfter: 0000000000000000
-  metroApplicationDescription: AngryBirds3DProject
+  metroApplicationDescription: AngryBirds3D_Unity
   wsaImages: {}
   metroTileShortName: 
   metroTileShowName: 0
@@ -930,10 +930,10 @@ PlayerSettings:
   captureStartupLogs: {}
   activeInputHandler: 2
   windowsGamepadBackendHint: 0
-  cloudProjectId: 4bea5f5e-b9a8-42d0-8638-7daa90b3a81e
+  cloudProjectId: cfcbf0b4-e3f8-43d9-b203-a8d58b7920fd
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: AngryBirds3DProject
+  projectName: AngryBirds3D_Unity
   organizationId: daimnon
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
