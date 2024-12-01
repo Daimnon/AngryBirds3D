@@ -31,7 +31,6 @@ public class Bird : MonoBehaviour
     private bool _wasShot = false; // if has been shot already
 
     #region Monobehaviour Callbacks
-
     private void OnEnable()
     {
         EnableInputs();
@@ -40,7 +39,6 @@ public class Bird : MonoBehaviour
     {
         DisableInputs();
     }
-
     private void Awake()
     {
         _controls = new();
@@ -56,6 +54,11 @@ public class Bird : MonoBehaviour
     {
         _pointerPos = _pointer.position.value;
         _pointerPos.z = _mainCam.nearClipPlane;
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        Vector3 collisionImpulse = collision.impulse;
+        float impactForce = collisionImpulse.magnitude / Time.fixedDeltaTime;
     }
     #endregion
 
