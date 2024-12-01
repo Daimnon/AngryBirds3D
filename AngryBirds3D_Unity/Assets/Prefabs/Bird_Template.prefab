@@ -10,9 +10,11 @@ GameObject:
   m_Component:
   - component: {fileID: 2239706992435163916}
   - component: {fileID: 1321998298337101774}
+  - component: {fileID: 5038451708259266290}
+  - component: {fileID: 7886802556938407220}
   m_Layer: 0
   m_Name: Bird_Template
-  m_TagString: Untagged
+  m_TagString: Bird
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -58,8 +60,53 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 120
   m_CollisionDetection: 0
+--- !u!145 &5038451708259266290
+SpringJoint:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2873877615828460285}
+  serializedVersion: 3
+  m_ConnectedBody: {fileID: 0}
+  m_ConnectedArticulationBody: {fileID: 0}
+  m_Anchor: {x: 0, y: 0, z: 0}
+  m_Axis: {x: 1, y: 0, z: 0}
+  m_AutoConfigureConnectedAnchor: 1
+  m_ConnectedAnchor: {x: 0, y: 0, z: 0}
+  m_Spring: 25
+  m_Damper: 0.2
+  m_MinDistance: 0
+  m_MaxDistance: 0
+  m_Tolerance: 0.025
+  m_BreakForce: 20
+  m_BreakTorque: Infinity
+  m_EnableCollision: 0
+  m_EnablePreprocessing: 1
+  m_MassScale: 1
+  m_ConnectedMassScale: 1
+--- !u!114 &7886802556938407220
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2873877615828460285}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2640f46b3c0c054cb6148434b0f0dfd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _rb: {fileID: 1321998298337101774}
+  _anchorJoint: {fileID: 5038451708259266290}
+  _collider: {fileID: 8085366504754215541}
+  _speed: 50
+  _releaseDistanceFromAnchor: 2
+  _interactableLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1001 &7573462633323455421
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -124,6 +171,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: fbx_red
       objectReference: {fileID: 0}
+    - target: {fileID: 5175966951279688082, guid: ed90555a0701f3f4f8a248492146d0b7, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5175966951279688082, guid: ed90555a0701f3f4f8a248492146d0b7, type: 3}
+      propertyPath: m_TagString
+      value: Bird
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -144,7 +199,7 @@ MeshCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3372882379291990575}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 313f2e3f7bbb1124ab19029d52de3ee6, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
