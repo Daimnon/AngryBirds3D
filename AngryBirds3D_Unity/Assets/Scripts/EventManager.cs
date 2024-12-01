@@ -3,12 +3,21 @@ using UnityEngine;
 
 public static class EventManager
 {
-    public static Action OnBirdShot;
-    public static Action OnBirdHit;
+    // might not need <Bird>
+    public static Action<Bird> OnBirdShot;
+    public static Action<Bird> OnBirdHit;
+    // ---------------------
 
-    public static void InvokeBirdShot()
+
+    public static void InvokeBirdShot(Bird bird)
     {
-        OnBirdShot?.Invoke();
+        if (!bird)
+        {
+            Debug.Log("Invoke failed: BirdShot, No bird was passed");
+            return;
+        }
+
+        OnBirdShot?.Invoke(bird);
         Debug.Log("Invoked: BirdShot");
     }
     public static void InvokeBirdHit(Bird bird)
@@ -19,7 +28,7 @@ public static class EventManager
             return;
         }
 
-        OnBirdHit?.Invoke();
+        OnBirdHit?.Invoke(bird);
         Debug.Log("Invoked: BirdHit");
     }
 }

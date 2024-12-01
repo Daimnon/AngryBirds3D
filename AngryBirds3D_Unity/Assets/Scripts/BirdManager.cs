@@ -15,10 +15,14 @@ public enum BirdType
 [RequireComponent(typeof(Rigidbody))]
 public class BirdManager : MonoBehaviour
 {
+    public static BirdManager _instance = null;
+    public static BirdManager Instance => _instance;
+
     [Header("Pool")]
     [SerializeField] private Bird[] _prefabs;
     [SerializeField] private int _initialPoolSize = 20;
     [SerializeField] private Rigidbody _anchorRb;
+    public Rigidbody AnchorRb => _anchorRb;
     private List<Bird> _pool;
 
     [Header("Spawn")]
@@ -27,6 +31,15 @@ public class BirdManager : MonoBehaviour
 
     private void Awake()
     {
+        if (_instance == null)
+        {
+            _instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+
         _pool = new List<Bird>();
     }
     private void Start()

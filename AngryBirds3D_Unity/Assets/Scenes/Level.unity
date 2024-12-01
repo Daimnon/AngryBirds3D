@@ -495,7 +495,7 @@ GameObject:
   m_Component:
   - component: {fileID: 779709966}
   m_Layer: 0
-  m_Name: BirdSpawn
+  m_Name: SpawnPoint_Bird
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -696,7 +696,6 @@ MonoBehaviour:
   - {fileID: 5832063593119386744, guid: 955b639b92931fe45affd2737055e174, type: 3}
   _initialPoolSize: 20
   _anchorRb: {fileID: 1782185541}
-  _readyBird: {fileID: 0}
   _startingBird: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

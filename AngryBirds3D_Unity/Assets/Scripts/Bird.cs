@@ -21,13 +21,16 @@ public class Bird : MonoBehaviour
     public SpringJoint AnchorJoint => _anchorJoint;
 
     [SerializeField] private Rigidbody _rb;
-    [SerializeField][Range(0.1f, 100.0f)] private float _speed = 50.0f;
-    [SerializeField][Range(0.1f, 100.0f)] private float _releaseDistanceFromAnchor = 0.75f;
+    [SerializeField] private ParticleSystem _feathersImpactVFX;
+    [SerializeField] private TrajectoryDrawer _td;
+    [SerializeField][Range(0.1f, 1000.0f)] private float _speed = 50.0f;
+    [SerializeField][Range(0.75f, 10.0f)] private float _releaseDistanceFromAnchor = 0.75f;
     [SerializeField] private float _dragDistanceFromAnchor = 2.0f;
     [SerializeField] private LayerMask _interactableLayer;
 
     private Mouse _pointer;
     private Vector3 _pointerPos = Vector2.zero;
+    private float _maxShootForce;
     private bool _wasShot = false; // if has been shot already
 
     #region Monobehaviour Callbacks
@@ -57,8 +60,7 @@ public class Bird : MonoBehaviour
     }
     private void OnCollisionEnter(Collision collision)
     {
-        Vector3 collisionImpulse = collision.impulse;
-        float impactForce = collisionImpulse.magnitude / Time.fixedDeltaTime;
+        Hit(collision);
     }
     #endregion
 
@@ -126,6 +128,7 @@ public class Bird : MonoBehaviour
             Vector3 clampedTargetPos = _anchorJoint.connectedBody.position + (targetPos - _anchorJoint.connectedBody.position).normalized * _dragDistanceFromAnchor;
 
             transform.position = isWithinDragDistance ? clampedTargetPos : targetPos;
+            //_td.Draw();
             yield return null;
         }
     }
@@ -153,6 +156,7 @@ public class Bird : MonoBehaviour
         // do sfx
         // do animation
         _rb.isKinematic = true;
+        //_td.
         StartCoroutine(AimRoutine());
     }
     private void StopAiming()
@@ -167,12 +171,24 @@ public class Bird : MonoBehaviour
         Destroy(_anchorJoint);
         _anchorJoint = null;
 
-        EventManager.InvokeBirdShot();
+        EventManager.InvokeBirdShot(this);
+        //Vector3 launchVelocity = (_td.PointerPosOnDragStarted - _rb.position).normalized * _anchorJoint.spring * _maxShootForce;
+        //_rb.linearVelocity = launchVelocity;
     }
-    private void Hit()
+    private void Hit(Collision collision)
     {
         // do sfx
-        // do vfx
+
+        Vector3 collisionImpulse = collision.impulse;
+        float impactForce = collisionImpulse.magnitude / Time.fixedDeltaTime;
+
+        ContactPoint contactPoint = collision.GetContact(0);
+        Quaternion quaternion = Quaternion.LookRotation(-contactPoint.normal); // calculate rotation based on reversed impact direction
+        ParticleSystem feathersVFX = Instantiate(_feathersImpactVFX, contactPoint.point, quaternion);
+        Vector3 newScale = feathersVFX.transform.localScale;
+        newScale *= 1.0f + 1.0f / impactForce;
+        feathersVFX.transform.localScale = newScale;
+
         // remove script / disable script
     }
     #endregion
@@ -186,7 +202,7 @@ public class Bird : MonoBehaviour
     }
     #endregion
 
-    private void OnDrawGizmos()
+    /*private void OnDrawGizmos()
     {
         if (_pointer != null)
         {
@@ -197,6 +213,5 @@ public class Bird : MonoBehaviour
             Gizmos.color = Color.red;
             Gizmos.DrawLine(origin, origin + direction * distance);
         }
-    }
-
+    }*/
 }
