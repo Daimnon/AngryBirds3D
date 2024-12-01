@@ -20,7 +20,10 @@ public class Bird : MonoBehaviour
     [SerializeField] private SpringJoint _anchorJoint; // joint connectedBody is recieved when spawned form BirdManager
     public SpringJoint AnchorJoint => _anchorJoint;
 
+    [SerializeField] private Animator _animator;
     [SerializeField] private Rigidbody _rb;
+    [SerializeField] private AudioSource _audioSource;
+    [SerializeField] private AudioClip[] _audioClips;
     [SerializeField] private ParticleSystem _feathersImpactVFX;
     [SerializeField][Range(0.1f, 100.0f)] private float _speed = 50.0f;
     [SerializeField][Range(0.1f, 100.0f)] private float _releaseDistanceFromAnchor = 0.75f;
@@ -171,7 +174,9 @@ public class Bird : MonoBehaviour
     }
     private void Hit(Collision collision)
     {
-        // do sfx
+        PlayImpactSound();
+        _animator.SetTrigger("Impact");
+        Debug.Log("Impact");
 
         Vector3 collisionImpulse = collision.impulse;
         float impactForce = collisionImpulse.magnitude / Time.fixedDeltaTime;
@@ -182,8 +187,14 @@ public class Bird : MonoBehaviour
         Vector3 newScale = feathersVFX.transform.localScale;
         newScale *= 1.0f + 1.0f / impactForce;
         feathersVFX.transform.localScale = newScale;
-
+        Destroy(feathersVFX, 0.5f);
+        Destroy(this, 0.6f);
         // remove script / disable script
+    }
+    private void PlayImpactSound()
+    {
+        int audioIndex = UnityEngine.Random.Range(0, _audioClips.Length);
+        _audioSource.PlayOneShot(_audioClips[audioIndex]);
     }
     #endregion
 
@@ -193,6 +204,12 @@ public class Bird : MonoBehaviour
         Debug.Log(pointerPos);
         Debug.Log(Camera.main.ScreenPointToRay(pointerPos));
         Debug.Log(Camera.main.ScreenPointToRay(Mouse.current.position.value));
+    }
+
+    [ContextMenu("Do Impact Animation")]
+    private void TestAnimation()
+    {
+        _animator.SetTrigger("Impact");
     }
     #endregion
 
