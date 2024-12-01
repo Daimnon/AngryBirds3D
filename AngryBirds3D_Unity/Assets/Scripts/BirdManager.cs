@@ -22,8 +22,8 @@ public class BirdManager : MonoBehaviour
     private List<Bird> _pool;
 
     [Header("Spawn")]
-    [SerializeField] private Bird _readyBird = null;
     [SerializeField] private BirdType _startingBird = BirdType.Regular;
+    private Bird _readyBird = null;
 
     private void Awake()
     {
@@ -121,6 +121,7 @@ public class BirdManager : MonoBehaviour
         Vector3 position = _anchorRb.position;
         Quaternion quaternion = Quaternion.Euler(new Vector3(0.0f, 90.0f, 0.0f)); // so birds look to the right
         bird.transform.SetLocalPositionAndRotation(position, quaternion);
+        _readyBird = bird;
     }
     private void SpawnBird(BirdType birdType)
     {
@@ -128,6 +129,7 @@ public class BirdManager : MonoBehaviour
         Vector3 position = _anchorRb.position;
         Quaternion quaternion = Quaternion.Euler(new Vector3(0.0f, 90.0f, 0.0f)); // so birds look to the right
         bird.transform.SetLocalPositionAndRotation(position, quaternion);
+        _readyBird = bird;
     }
     #endregion
 }
