@@ -20,7 +20,7 @@ public class Bird : MonoBehaviour
     [SerializeField] private SpringJoint _anchorJoint; // joint connectedBody is recieved when spawned form BirdManager
     public SpringJoint AnchorJoint => _anchorJoint;
 
-    [SerializeField] private Animator _animator;
+    [SerializeField] private Animator[] _animators;
     [SerializeField] private Rigidbody _rb;
     [SerializeField] private AudioSource _audioSource;
     [SerializeField] private AudioClip[] _audioClips;
@@ -175,8 +175,11 @@ public class Bird : MonoBehaviour
     private void Hit(Collision collision)
     {
         PlayImpactSound();
-        _animator.SetTrigger("Impact");
-        Debug.Log("Impact");
+
+        for (int i = 0; i < _animators.Length; i++)
+        {
+            _animators[i].SetTrigger("Impact");
+        }
 
         Vector3 collisionImpulse = collision.impulse;
         float impactForce = collisionImpulse.magnitude / Time.fixedDeltaTime;
@@ -187,9 +190,8 @@ public class Bird : MonoBehaviour
         Vector3 newScale = feathersVFX.transform.localScale;
         newScale *= 1.0f + 1.0f / impactForce;
         feathersVFX.transform.localScale = newScale;
+
         Destroy(feathersVFX, 0.5f);
-        Destroy(this, 0.6f);
-        // remove script / disable script
     }
     private void PlayImpactSound()
     {
@@ -209,7 +211,8 @@ public class Bird : MonoBehaviour
     [ContextMenu("Do Impact Animation")]
     private void TestAnimation()
     {
-        _animator.SetTrigger("Impact");
+        _animators[0].SetTrigger("Impact");
+        _animators[1].SetTrigger("Impact");
     }
     #endregion
 
