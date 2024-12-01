@@ -76,12 +76,12 @@ SpringJoint:
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: 0, y: 0, z: 0}
-  m_Spring: 25
+  m_Spring: 120
   m_Damper: 0.2
   m_MinDistance: 0
   m_MaxDistance: 0
   m_Tolerance: 0.025
-  m_BreakForce: 20
+  m_BreakForce: Infinity
   m_BreakTorque: Infinity
   m_EnableCollision: 0
   m_EnablePreprocessing: 1
@@ -99,11 +99,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2640f46b3c0c054cb6148434b0f0dfd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _birdType: 0
   _rb: {fileID: 1321998298337101774}
   _anchorJoint: {fileID: 5038451708259266290}
-  _collider: {fileID: 8085366504754215541}
+  _anchorGO: {fileID: 0}
   _speed: 50
-  _releaseDistanceFromAnchor: 2
+  _releaseDistanceFromAnchor: 1
+  _dragDistanceFromAnchor: 2
   _interactableLayer:
     serializedVersion: 2
     m_Bits: 64

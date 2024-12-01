@@ -9,15 +9,26 @@ public class Bird : MonoBehaviour
     private InputAction _interactAction;
 
     private Camera _mainCam;
+
+    [SerializeField] private BirdType _birdType;
+    public BirdType @BirdType => _birdType;
+
+    
+    [SerializeField] private GameObject _anchorGO; // anchor is recieved when spawned form BirdManager
+    public GameObject AnchorGO { get => _anchorGO; set => _anchorGO = value; }
+
+    [SerializeField] private SpringJoint _anchorJoint; // joint connectedBody is recieved when spawned form BirdManager
+    public SpringJoint AnchorJoint => _anchorJoint;
+
     [SerializeField] private Rigidbody _rb;
-    [SerializeField] private SpringJoint _anchorJoint;
     [SerializeField][Range(0.1f, 100.0f)] private float _speed = 50.0f;
-    [SerializeField][Range(0.1f, 100.0f)] private float _releaseDistanceFromAnchor = 0.4f;
+    [SerializeField][Range(0.1f, 100.0f)] private float _releaseDistanceFromAnchor = 0.75f;
     [SerializeField] private float _dragDistanceFromAnchor = 2.0f;
     [SerializeField] private LayerMask _interactableLayer;
 
     private Mouse _pointer;
     private Vector3 _pointerPos = Vector2.zero;
+    private bool _wasShot = false; // if has been shot already
 
     #region Monobehaviour Callbacks
 
@@ -81,13 +92,12 @@ public class Bird : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit, distance, _interactableLayer))
         {
-            //Debug.Log(hit.transform.name);
             StartAiming();
         }
     }
     private void OnPointerRelease(InputAction.CallbackContext context)
     {
-
+        StopAiming();
     }
     #endregion
 
@@ -115,16 +125,52 @@ public class Bird : MonoBehaviour
             transform.position = isWithinDragDistance ? clampedTargetPos : targetPos;
             yield return null;
         }
-        StopAiming();
+    }
+    private IEnumerator ShootRoutine()
+    {
+        if (!_anchorJoint)
+        {
+            Debug.LogError("No anchor connected to bird");
+            yield break;
+        }
+
+        // every frame checks if mouse btn was let go
+        while (!_wasShot)
+        {
+            if (Vector3.Distance(transform.position, _anchorJoint.connectedBody.position) < _releaseDistanceFromAnchor)
+            {
+                ShootBird();
+                yield break;
+            }
+            yield return null;
+        }
     }
     private void StartAiming()
     {
+        // do sfx
+        // do animation
         _rb.isKinematic = true;
         StartCoroutine(AimRoutine());
     }
     private void StopAiming()
     {
         _rb.isKinematic = false;
+        StartCoroutine(ShootRoutine());
+    }
+    private void ShootBird()
+    {
+        _wasShot = true;
+        _anchorJoint.connectedBody = null;
+        Destroy(_anchorJoint);
+        _anchorJoint = null;
+
+        EventManager.InvokeBirdShot();
+    }
+    private void Hit()
+    {
+        // do sfx
+        // do vfx
+        // remove script / disable script
     }
     #endregion
 
