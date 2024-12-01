@@ -21,6 +21,7 @@ public class Bird : MonoBehaviour
     public SpringJoint AnchorJoint => _anchorJoint;
 
     [SerializeField] private Rigidbody _rb;
+    [SerializeField] private ParticleSystem _feathersImpactVFX;
     [SerializeField][Range(0.1f, 100.0f)] private float _speed = 50.0f;
     [SerializeField][Range(0.1f, 100.0f)] private float _releaseDistanceFromAnchor = 0.75f;
     [SerializeField] private float _dragDistanceFromAnchor = 2.0f;
@@ -57,8 +58,7 @@ public class Bird : MonoBehaviour
     }
     private void OnCollisionEnter(Collision collision)
     {
-        Vector3 collisionImpulse = collision.impulse;
-        float impactForce = collisionImpulse.magnitude / Time.fixedDeltaTime;
+        Hit(collision);
     }
     #endregion
 
@@ -169,10 +169,20 @@ public class Bird : MonoBehaviour
 
         EventManager.InvokeBirdShot();
     }
-    private void Hit()
+    private void Hit(Collision collision)
     {
         // do sfx
-        // do vfx
+
+        Vector3 collisionImpulse = collision.impulse;
+        float impactForce = collisionImpulse.magnitude / Time.fixedDeltaTime;
+
+        ContactPoint contactPoint = collision.GetContact(0);
+        Quaternion quaternion = Quaternion.LookRotation(contactPoint.normal); // calculate rotation based on reversed impact direction
+        ParticleSystem feathersVFX = Instantiate(_feathersImpactVFX, contactPoint.point, quaternion);
+        Vector3 newScale = feathersVFX.transform.localScale;
+        newScale *= 1.0f + 1.0f / impactForce;
+        feathersVFX.transform.localScale = newScale;
+
         // remove script / disable script
     }
     #endregion
