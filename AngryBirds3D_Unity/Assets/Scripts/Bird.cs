@@ -6,16 +6,18 @@ using UnityEngine.InputSystem;
 public class Bird : MonoBehaviour
 {
     private InputSystem_Actions _controls;
-    private InputAction _lookAction, _interactAction;
+    private InputAction _interactAction;
 
+    private Camera _mainCam;
     [SerializeField] private Rigidbody _rb;
     [SerializeField] private SpringJoint _anchorJoint;
     [SerializeField][Range(0.1f, 100.0f)] private float _speed = 50.0f;
-    [SerializeField][Range(0.1f, 100.0f)] private float _releaseDistanceFromAnchor = 2.0f;
+    [SerializeField][Range(0.1f, 100.0f)] private float _releaseDistanceFromAnchor = 0.4f;
+    [SerializeField] private float _dragDistanceFromAnchor = 2.0f;
     [SerializeField] private LayerMask _interactableLayer;
 
     private Mouse _pointer;
-    private Vector2 _pointerPos = Vector2.zero;
+    private Vector3 _pointerPos = Vector2.zero;
 
     #region Monobehaviour Callbacks
 
@@ -35,53 +37,44 @@ public class Bird : MonoBehaviour
     }
     private void Start()
     {
+        _mainCam = Camera.main;
         _pointer = Mouse.current;
+        _pointerPos = new Vector3(_pointer.position.value.x, _pointer.position.value.y, _mainCam.nearClipPlane);
     }
     private void Update()
     {
+        _pointerPos = _pointer.position.value;
+        _pointerPos.z = _mainCam.nearClipPlane;
     }
     #endregion
 
     #region Inputs Handling
     private void InitializeInputs()
     {
-        _lookAction = _controls.Player.Look;
         _interactAction = _controls.Player.Interact;
     }
     private void EnableInputs()
     {
-        _lookAction.Enable();
         _interactAction.Enable();
 
-        _controls.Player.Look.performed += OnLook;
         _controls.Player.Interact.started += OnPointerClick;
         _controls.Player.Interact.canceled += OnPointerRelease;
     }
     private void DisableInputs()
     {
-        _controls.Player.Look.performed -= OnLook;
         _controls.Player.Interact.started -= OnPointerClick;
         _controls.Player.Interact.canceled -= OnPointerRelease;
 
         _interactAction.Disable();
-        _lookAction.Disable();
     }
     #endregion
 
     #region Inputs Logic
-    private void OnLook(InputAction.CallbackContext context)
-    {
-        _pointerPos = context.ReadValue<Vector2>();
-        Debug.Log(_pointerPos);
-    }
     private void OnPointerClick(InputAction.CallbackContext context)
     {
-        Camera mainCam = Camera.main;
-
-        float distance = Mathf.Abs(mainCam.transform.position.z) + 1;
-        Vector3 newPointerVector = new(_pointerPos.x, _pointerPos.y, mainCam.nearClipPlane);
-        Vector3 origin = mainCam.ScreenToWorldPoint(newPointerVector);
-        Vector3 direction = (origin - mainCam.transform.position).normalized;
+        float distance = Mathf.Abs(_mainCam.transform.position.z) + 1;
+        Vector3 origin = _mainCam.ScreenToWorldPoint(_pointerPos);
+        Vector3 direction = (origin - _mainCam.transform.position).normalized;
 
         Ray ray = new(origin, direction);
         RaycastHit hit;
@@ -94,6 +87,7 @@ public class Bird : MonoBehaviour
     }
     private void OnPointerRelease(InputAction.CallbackContext context)
     {
+
     }
     #endregion
 
@@ -109,17 +103,28 @@ public class Bird : MonoBehaviour
         // every frame checks if mouse btn was let go
         while (!_interactAction.WasReleasedThisFrame())
         {
-            float distanceFromAnchor = Vector3.Distance(transform.position, _anchorJoint.connectedBody.position);
-            Vector3 newPointerVector = new(_pointerPos.x, _pointerPos.y, 0);
-            Vector3 targetPos = Camera.main.ScreenToWorldPoint(newPointerVector);
-            transform.position = targetPos;
+            Vector3 targetPos = _pointerPos;
+            float zDepth = Mathf.Abs(_mainCam.transform.position.z - transform.position.z);
+
+            targetPos.z = zDepth;
+            targetPos = _mainCam.ScreenToWorldPoint(targetPos);
+
+            bool isWithinDragDistance = Vector3.Distance(targetPos, _anchorJoint.connectedBody.position) > _dragDistanceFromAnchor;
+            Vector3 clampedTargetPos = _anchorJoint.connectedBody.position + (targetPos - _anchorJoint.connectedBody.position).normalized * _dragDistanceFromAnchor;
+
+            transform.position = isWithinDragDistance ? clampedTargetPos : targetPos;
             yield return null;
         }
+        StopAiming();
     }
     private void StartAiming()
     {
         _rb.isKinematic = true;
         StartCoroutine(AimRoutine());
+    }
+    private void StopAiming()
+    {
+        _rb.isKinematic = false;
     }
     #endregion
 
@@ -136,12 +141,9 @@ public class Bird : MonoBehaviour
     {
         if (_pointer != null)
         {
-            Camera mainCam = Camera.main;
-
-            float distance = Mathf.Abs(mainCam.transform.position.z) + 1;
-            Vector3 newPointerVector = new(_pointerPos.x, _pointerPos.y, mainCam.nearClipPlane);
-            Vector3 origin = mainCam.ScreenToWorldPoint(newPointerVector);
-            Vector3 direction = (origin - mainCam.transform.position).normalized;
+            float distance = Mathf.Abs(_mainCam.transform.position.z) + 1;
+            Vector3 origin = _mainCam.ScreenToWorldPoint(_pointerPos);
+            Vector3 direction = (origin - _mainCam.transform.position).normalized;
 
             Gizmos.color = Color.red;
             Gizmos.DrawLine(origin, origin + direction * distance);

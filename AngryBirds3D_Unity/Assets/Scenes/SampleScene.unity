@@ -591,6 +591,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5038451708259266290, guid: 3eedd0ff5f297c846bc6f683f11c386e, type: 3}
+      propertyPath: m_BreakForce
+      value: Infinity
+      objectReference: {fileID: 0}
+    - target: {fileID: 5038451708259266290, guid: 3eedd0ff5f297c846bc6f683f11c386e, type: 3}
       propertyPath: m_ConnectedBody
       value: 
       objectReference: {fileID: 1782185541}
