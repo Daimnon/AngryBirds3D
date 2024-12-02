@@ -30,7 +30,9 @@ public class BirdManager : MonoBehaviour
 
     [Header("Spawn")]
     [SerializeField] private BirdType _startingBird = BirdType.Red;
+
     private Bird _readyBird = null;
+    public Bird ReadyBird => _readyBird;
 
     private void Awake()
     {
