@@ -5,7 +5,9 @@ using UnityEngine;
 
 public enum BirdType
 {
-    Regular
+    Red,
+    Blue,
+    Black
 }
 
 /// <summary>
@@ -15,18 +17,26 @@ public enum BirdType
 [RequireComponent(typeof(Rigidbody))]
 public class BirdManager : MonoBehaviour
 {
+    private static BirdManager _instance = null;
+    public static BirdManager Instance => _instance;
+
     [Header("Pool")]
     [SerializeField] private Bird[] _prefabs;
+    public Bird[] Prefabs => _prefabs;
+
     [SerializeField] private int _initialPoolSize = 20;
     [SerializeField] private Rigidbody _anchorRb;
     private List<Bird> _pool;
 
     [Header("Spawn")]
-    [SerializeField] private BirdType _startingBird = BirdType.Regular;
+    [SerializeField] private BirdType _startingBird = BirdType.Red;
     private Bird _readyBird = null;
 
     private void Awake()
     {
+        if (!_instance) _instance = this;
+        else Destroy(gameObject);
+
         _pool = new List<Bird>();
     }
     private void Start()
@@ -47,6 +57,9 @@ public class BirdManager : MonoBehaviour
             {
                 Bird newBird = Instantiate(_prefabs[i], transform);
                 newBird.gameObject.SetActive(false);
+                newBird.AnchorGO = gameObject;
+                newBird.AnchorJoint.connectedBody = _anchorRb;
+                newBird.Rb.isKinematic = true;
                 _pool.Add(newBird);
             }
         }
@@ -62,11 +75,17 @@ public class BirdManager : MonoBehaviour
             Bird bird = _pool[i];
             if (!bird.gameObject.activeSelf)
             {
-                // set the anchor for the bird.
-                bird.AnchorGO = gameObject; 
-                bird.AnchorJoint.connectedBody = _anchorRb; // set the anchor for the bird.
                 bird.gameObject.SetActive(true);
                 bird.transform.SetParent(null);
+                bird.AnchorGO = gameObject; // set the anchor for the bird.
+                if (!bird.AnchorJoint)
+                {
+                    SpringJoint newJ = gameObject.AddComponent<SpringJoint>();
+                    newJ.spring = 120.0f;
+                    bird.AnchorJoint = newJ;
+                }
+                bird.Rb.isKinematic = true;
+
                 return bird;
             }
         }
@@ -87,9 +106,6 @@ public class BirdManager : MonoBehaviour
             Bird bird = _pool[i];
             if (!bird.gameObject.activeSelf)
             {
-                // set the anchor for the bird.
-                bird.AnchorGO = gameObject;
-                bird.AnchorJoint.connectedBody = _anchorRb; // set the anchor for the bird.
                 bird.gameObject.SetActive(true);
                 bird.transform.SetParent(null);
                 return bird;
@@ -108,24 +124,38 @@ public class BirdManager : MonoBehaviour
         bird.gameObject.SetActive(false);
         bird.transform.SetParent(transform);
         bird.transform.position = Vector3.zero;
-        bird.AnchorGO = null;
-        bird.AnchorJoint.connectedBody = null;
+        if (!bird.AnchorJoint)
+        {
+            SpringJoint newJ = bird.gameObject.AddComponent<SpringJoint>();
+            newJ.spring = 120.0f;
+            bird.AnchorJoint = newJ;
+            newJ.connectedBody = _anchorRb;
+        }
+        
+        bird.Rb.isKinematic = true;
         _pool.Add(bird);
+
+        int prefabIndex = UnityEngine.Random.Range(0, _prefabs.Length);
+        SpawnBird(prefabIndex);
     }
     #endregion
 
     #region Spawn Management
-    private void SpawnBird(int birdType)
+    public void SpawnBird(int birdType)
     {
         Bird bird = GetBirdFromPool(birdType);
+        bird.Rb.isKinematic = true;
+
         Vector3 position = _anchorRb.position;
         Quaternion quaternion = Quaternion.Euler(new Vector3(0.0f, 90.0f, 0.0f)); // so birds look to the right
         bird.transform.SetLocalPositionAndRotation(position, quaternion);
         _readyBird = bird;
     }
-    private void SpawnBird(BirdType birdType)
+    public void SpawnBird(BirdType birdType)
     {
         Bird bird = GetBirdFromPool(birdType);
+        bird.Rb.isKinematic = true;
+
         Vector3 position = _anchorRb.position;
         Quaternion quaternion = Quaternion.Euler(new Vector3(0.0f, 90.0f, 0.0f)); // so birds look to the right
         bird.transform.SetLocalPositionAndRotation(position, quaternion);

@@ -205,7 +205,7 @@ MonoBehaviour:
   - {fileID: 4492557763896302983}
   _rb: {fileID: 1321998298337101774}
   _audioSource: {fileID: 6567168589022143443}
-  _audioClips:
+  _impactAudioClips:
   - {fileID: 8300000, guid: f62fd7556ea508344b447977ac1f3ba6, type: 3}
   - {fileID: 8300000, guid: c6303312632ea944ba3b00c4f92740f3, type: 3}
   - {fileID: 8300000, guid: 1df42bbcbc8af51418faf9f994886443, type: 3}

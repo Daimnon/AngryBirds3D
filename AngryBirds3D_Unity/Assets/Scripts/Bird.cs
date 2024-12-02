@@ -18,21 +18,26 @@ public class Bird : MonoBehaviour
     public GameObject AnchorGO { get => _anchorGO; set => _anchorGO = value; }
 
     [SerializeField] private SpringJoint _anchorJoint; // joint connectedBody is recieved when spawned form BirdManager
-    public SpringJoint AnchorJoint => _anchorJoint;
+    public SpringJoint AnchorJoint { get => _anchorJoint; set => _anchorJoint = value; }
+
+    [SerializeField] private Rigidbody _rb;
+    public Rigidbody Rb => _rb;
 
     [SerializeField] private Animator[] _animators;
-    [SerializeField] private Rigidbody _rb;
     [SerializeField] private AudioSource _audioSource;
-    [SerializeField] private AudioClip[] _audioClips;
+    [SerializeField] private AudioClip[] _impactAudioClips;
     [SerializeField] private ParticleSystem _feathersImpactVFX;
     [SerializeField][Range(0.1f, 100.0f)] private float _speed = 50.0f;
     [SerializeField][Range(0.1f, 100.0f)] private float _releaseDistanceFromAnchor = 0.75f;
     [SerializeField] private float _dragDistanceFromAnchor = 2.0f;
+    [SerializeField] private float _timeToDie = 2.0f;
     [SerializeField] private LayerMask _interactableLayer;
 
     private Mouse _pointer;
     private Vector3 _pointerPos = Vector2.zero;
+    private float _deathTimer = 0;
     private bool _wasShot = false; // if has been shot already
+    private bool _isHit = false;
 
     #region Monobehaviour Callbacks
     private void OnEnable()
@@ -58,6 +63,16 @@ public class Bird : MonoBehaviour
     {
         _pointerPos = _pointer.position.value;
         _pointerPos.z = _mainCam.nearClipPlane;
+        Debug.Log(_pointerPos);
+
+        if (_isHit)
+        {
+            _deathTimer -= Time.deltaTime;
+            if (_deathTimer <= 0)
+            {
+                BirdManager.Instance.ReturnBirdToPool(this);
+            }
+        }
     }
     private void OnCollisionEnter(Collision collision)
     {
@@ -167,13 +182,14 @@ public class Bird : MonoBehaviour
     {
         _wasShot = true;
         _anchorJoint.connectedBody = null;
-        Destroy(_anchorJoint);
+        _anchorJoint.breakForce = 0;
         _anchorJoint = null;
 
         EventManager.InvokeBirdShot();
     }
     private void Hit(Collision collision)
     {
+        _deathTimer = _timeToDie;
         PlayImpactSound();
 
         for (int i = 0; i < _animators.Length; i++)
@@ -190,13 +206,14 @@ public class Bird : MonoBehaviour
         Vector3 newScale = feathersVFX.transform.localScale;
         newScale *= 1.0f + 1.0f / impactForce;
         feathersVFX.transform.localScale = newScale;
+        _isHit = true;
 
         Destroy(feathersVFX, 0.5f);
     }
     private void PlayImpactSound()
     {
-        int audioIndex = UnityEngine.Random.Range(0, _audioClips.Length);
-        _audioSource.PlayOneShot(_audioClips[audioIndex]);
+        int audioIndex = UnityEngine.Random.Range(0, _impactAudioClips.Length);
+        _audioSource.PlayOneShot(_impactAudioClips[audioIndex]);
     }
     #endregion
 
