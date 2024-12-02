@@ -53,6 +53,8 @@ public class LevelManager : MonoBehaviour
     private IEnumerator StartGameRoutine()
     {
         // first transition
+        yield return new WaitForSeconds(0.4f);
+
         _camController.SetTransitionCamera();
         yield return StartCoroutine(ApplyTintOnEnvironmentRoutine());
 

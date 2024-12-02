@@ -16,12 +16,14 @@ public class CameraController : MonoBehaviour
 
     public void SetTransitionCamera()
     {
+        _transitionCam.gameObject.SetActive(true);
         _entryCam.Priority = 0;
         _transitionCam.Priority = 2;
         _gameCam.Priority = 1;
     }
     public void SetGameCamera()
     {
+        _gameCam.gameObject.SetActive(true);
         _entryCam.Priority = 0;
         _transitionCam.Priority = 1;
         _gameCam.Priority = 2;

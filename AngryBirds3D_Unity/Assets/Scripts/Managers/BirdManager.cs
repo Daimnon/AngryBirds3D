@@ -161,10 +161,9 @@ public class BirdManager : MonoBehaviour
         position.y += 0.5f;
         Quaternion quaternion = Quaternion.Euler(new Vector3(0.0f, 90.0f, 0.0f)); // so birds look to the right
         bird.transform.SetLocalPositionAndRotation(position, quaternion);
-
         TryAddSpringJoint(bird);
-
         _readyBird = bird;
+        EventManager.InvokeBirdSpawned(bird);
         return bird;
     }
     public Bird SpawnBird(BirdType birdType)

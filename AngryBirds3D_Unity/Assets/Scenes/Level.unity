@@ -1356,6 +1356,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Game_Camera
       objectReference: {fileID: 0}
+    - target: {fileID: 1738955942215141441, guid: 4c9a5273cabefd7418ba9b3f991a723f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2131096816441590466, guid: 4c9a5273cabefd7418ba9b3f991a723f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1551,6 +1555,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: 'Transitiom_Camera '
       objectReference: {fileID: 0}
+    - target: {fileID: 3663201540348197863, guid: 77a54feee9a741242b30bb5096397295, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6232600523891301740, guid: 77a54feee9a741242b30bb5096397295, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1607,6 +1615,10 @@ PrefabInstance:
     - target: {fileID: 1034352932299807871, guid: 923d5aa4e911cf5428f4263bc62ae107, type: 3}
       propertyPath: m_Name
       value: Entry_Camera
+      objectReference: {fileID: 0}
+    - target: {fileID: 1034352932299807871, guid: 923d5aa4e911cf5428f4263bc62ae107, type: 3}
+      propertyPath: m_TagString
+      value: MainCamera
       objectReference: {fileID: 0}
     - target: {fileID: 3824314013030298976, guid: 923d5aa4e911cf5428f4263bc62ae107, type: 3}
       propertyPath: m_LocalPosition.x

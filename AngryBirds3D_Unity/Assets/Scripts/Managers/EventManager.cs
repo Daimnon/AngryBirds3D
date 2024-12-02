@@ -3,6 +3,7 @@ using UnityEngine;
 
 public static class EventManager
 {
+    public static Action<Bird> OnBirdSpawned;
     public static Action OnBirdShot;
     public static Action OnBirdHit;
 
@@ -11,6 +12,11 @@ public static class EventManager
 
     public static Action OnGameOver;
 
+    public static void InvokeBirdSpawned(Bird bird)
+    {
+        OnBirdSpawned?.Invoke(bird);
+        Debugger.Log($"Invoked: BirdSpawned, {bird.name}");
+    }
     public static void InvokeBirdShot()
     {
         OnBirdShot?.Invoke();
