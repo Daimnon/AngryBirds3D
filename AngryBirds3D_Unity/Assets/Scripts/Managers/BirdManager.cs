@@ -30,6 +30,17 @@ public class BirdManager : MonoBehaviour
 
     [Header("Spawn")]
     [SerializeField] private BirdType _startingBird = BirdType.Red;
+    [SerializeField] private CameraController _camController;
+
+    private void OnEnable()
+    {
+        EventManager.OnPrepareGame += OnPrepareGame;
+    }
+
+    private void OnDisable()
+    {
+        EventManager.OnPrepareGame -= OnPrepareGame;
+    }
 
     private Bird _readyBird = null;
     public Bird ReadyBird => _readyBird;
@@ -44,7 +55,6 @@ public class BirdManager : MonoBehaviour
     private void Start()
     {
         InitializePool();
-        SpawnBird(_startingBird);
     }
 
     #region Pool Management
@@ -161,11 +171,12 @@ public class BirdManager : MonoBehaviour
             bird.AnchorJoint = newJ;
             newJ.connectedBody = _anchorRb;
         }
-        
         _pool.Add(bird);
 
         int prefabIndex = UnityEngine.Random.Range(0, _prefabs.Length);
         SpawnBird(prefabIndex);
+
+        _camController.SetNewFollowBird();
     }
     #endregion
 
@@ -193,4 +204,9 @@ public class BirdManager : MonoBehaviour
         _readyBird = bird;
     }
     #endregion
+
+    private void OnPrepareGame()
+    {
+        SpawnBird(_startingBird);
+    }
 }

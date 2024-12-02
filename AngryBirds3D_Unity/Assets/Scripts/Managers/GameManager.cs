@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Unity.Cinemachine;
 using UnityEngine;
@@ -8,16 +9,17 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Color _environmentTint = new(123, 123, 123, 255);
     [SerializeField] private Material _material;
     [SerializeField] private float _evnironmentTintTransitionDuration = 2.0f;
+    [SerializeField] private float _preperationDuration = 0.5f;
+    [SerializeField] private float _startGameCamDelay = 0.5f;
 
     [Header("Camera Transitions")]
-    [SerializeField] private CinemachineCamera _entryCam;
-    [SerializeField] private CinemachineCamera _gameCam;
+    [SerializeField] private CameraController _camController;
 
-    private void Start()
+    
+
+    private void OnApplicationQuit()
     {
-        _entryCam.Priority = 0;
-        _gameCam.Priority = 1;
-        StartCoroutine(ApplyTintOnEnvironmentRoutine());
+        _material.color = Color.white;
     }
 
     private IEnumerator ApplyTintOnEnvironmentRoutine()
@@ -34,9 +36,26 @@ public class GameManager : MonoBehaviour
         }
         _material.color = _environmentTint;
     }
-
-    private void OnApplicationQuit()
+    private IEnumerator StartGameRoutine()
     {
-        _material.color = Color.white;
+        // first transition
+        _camController.SetTransitionCamera();
+        yield return StartCoroutine(ApplyTintOnEnvironmentRoutine());
+
+        EventManager.InvokePrepareGame();
+        yield return new WaitForSeconds(_preperationDuration);
+
+        // second transition
+        _camController.SetNewFollowBird();
+        yield return new WaitForSeconds(_startGameCamDelay);
+
+        _camController.SetGameCamera();
+        EventManager.InvokeGameStart();
+    }
+
+    [ContextMenu("Start Game")]
+    public void StartGame()
+    {
+        StartCoroutine(StartGameRoutine());
     }
 }
