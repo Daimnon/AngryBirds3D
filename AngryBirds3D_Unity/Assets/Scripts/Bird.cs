@@ -7,12 +7,11 @@ public class Bird : MonoBehaviour
 {
     private InputSystem_Actions _controls;
     private InputAction _interactAction;
-
     private Camera _mainCam;
 
+    #region Properties
     [SerializeField] private BirdType _birdType;
     public BirdType @BirdType => _birdType;
-
     
     [SerializeField] private GameObject _anchorGO; // anchor is recieved when spawned form BirdManager
     public GameObject AnchorGO { get => _anchorGO; set => _anchorGO = value; }
@@ -22,28 +21,40 @@ public class Bird : MonoBehaviour
 
     [SerializeField] private Rigidbody _rb;
     public Rigidbody Rb => _rb;
+    #endregion
 
-    [SerializeField] private Animator[] _animators;
-    [SerializeField] private AudioSource _audioSource;
-    [SerializeField] private AudioClip[] _impactAudioClips;
-    [SerializeField] private ParticleSystem _feathersImpactVFX;
-    [SerializeField][Range(0.1f, 100.0f)] private float _speed = 50.0f;
-    [SerializeField][Range(0.1f, 100.0f)] private float _releaseDistanceFromAnchor = 0.75f;
+    #region Serialized Members
+    [Header("Config")]
+    [SerializeField, Range(0.1f, 10.0f)] private float _releaseDistanceFromAnchor = 0.75f;
     [SerializeField] private float _dragDistanceFromAnchor = 2.0f;
     [SerializeField] private float _timeToDie = 2.0f;
     [SerializeField] private LayerMask _interactableLayer;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource _audioSource;
+    [SerializeField] private AudioClip[] _spawnSounds;
+    [SerializeField] private AudioClip[] _shotAudioClips;
+    [SerializeField] private AudioClip[] _impactAudioClips;
+
+    [Header("VFX & Animation")]
+    [SerializeField] private Animator[] _animators;
+    [SerializeField] private ParticleSystem _feathersImpactVFX;
+    #endregion
+
+    #region Members
     private Mouse _pointer;
     private Vector3 _pointerPos = Vector2.zero;
     private float _deathTimer = 0;
     private bool _wasShot = false; // if has been shot already
     private bool _isHit = false;
+    #endregion
 
     #region Monobehaviour Callbacks
     private void OnEnable()
     {
         _isHit = false;
         EnableInputs();
+        PlaySpawnSound();
     }
     private void OnDisable()
     {
@@ -168,6 +179,7 @@ public class Bird : MonoBehaviour
             yield return null;
         }
     }
+    
     private void StartAiming()
     {
         // do sfx
@@ -182,6 +194,7 @@ public class Bird : MonoBehaviour
     }
     private void ShootBird()
     {
+        PlayShotSound();
         _wasShot = true;
         _anchorJoint.connectedBody = null;
         _anchorJoint.breakForce = 0;
@@ -216,6 +229,17 @@ public class Bird : MonoBehaviour
         feathersVFX.transform.localScale = newScale;
         _isHit = true;
     }
+
+    private void PlaySpawnSound()
+    {
+        int audioIndex = UnityEngine.Random.Range(0, _spawnSounds.Length);
+        _audioSource.PlayOneShot(_spawnSounds[audioIndex]); 
+    }
+    private void PlayShotSound()
+    {
+        int audioIndex = UnityEngine.Random.Range(0, _shotAudioClips.Length);
+        _audioSource.PlayOneShot(_shotAudioClips[audioIndex]);
+    }
     private void PlayImpactSound()
     {
         int audioIndex = UnityEngine.Random.Range(0, _impactAudioClips.Length);
@@ -237,7 +261,6 @@ public class Bird : MonoBehaviour
         _animators[0].SetTrigger("Impact");
         _animators[1].SetTrigger("Impact");
     }
-    #endregion
 
     private void OnDrawGizmos()
     {
@@ -251,5 +274,5 @@ public class Bird : MonoBehaviour
             Gizmos.DrawLine(origin, origin + direction * distance);
         }
     }
-
+    #endregion
 }

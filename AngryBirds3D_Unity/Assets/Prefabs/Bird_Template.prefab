@@ -201,10 +201,17 @@ MonoBehaviour:
   _anchorGO: {fileID: 0}
   _anchorJoint: {fileID: 5038451708259266290}
   _rb: {fileID: 1321998298337101774}
-  _animators:
-  - {fileID: 3138399702565316832}
-  - {fileID: 4492557763896302983}
+  _releaseDistanceFromAnchor: 1
+  _dragDistanceFromAnchor: 2
+  _timeToDie: 2
+  _interactableLayer:
+    serializedVersion: 2
+    m_Bits: 64
   _audioSource: {fileID: 6567168589022143443}
+  _spawnSounds:
+  - {fileID: 8300000, guid: 8945cc984a1d2d24cbe1d682ee7a8903, type: 3}
+  _shotAudioClips:
+  - {fileID: 8300000, guid: a3f101f62cdf91340b6dfbc4a13dba33, type: 3}
   _impactAudioClips:
   - {fileID: 8300000, guid: f62fd7556ea508344b447977ac1f3ba6, type: 3}
   - {fileID: 8300000, guid: c6303312632ea944ba3b00c4f92740f3, type: 3}
@@ -214,14 +221,10 @@ MonoBehaviour:
   - {fileID: 8300000, guid: ba61733856bcaf94186848ff22f79180, type: 3}
   - {fileID: 8300000, guid: 14def5fd0fb28194d9c88d80d64befb9, type: 3}
   - {fileID: 8300000, guid: e9791e54cab36b041b9120473fa90a2b, type: 3}
+  _animators:
+  - {fileID: 3138399702565316832}
+  - {fileID: 4492557763896302983}
   _feathersImpactVFX: {fileID: 5938855406293984828, guid: 3eea48cc574f6bf45ac5f0d2de8d5d9f, type: 3}
-  _speed: 50
-  _releaseDistanceFromAnchor: 1
-  _dragDistanceFromAnchor: 2
-  _timeToDie: 2
-  _interactableLayer:
-    serializedVersion: 2
-    m_Bits: 64
 --- !u!1001 &7573462633323455421
 PrefabInstance:
   m_ObjectHideFlags: 0

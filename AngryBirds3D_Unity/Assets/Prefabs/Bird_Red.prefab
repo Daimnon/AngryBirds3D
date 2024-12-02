@@ -52,6 +52,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Bird_Red
       objectReference: {fileID: 0}
+    - target: {fileID: 7886802556938407220, guid: 3eedd0ff5f297c846bc6f683f11c386e, type: 3}
+      propertyPath: _shotAudioClips.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7886802556938407220, guid: 3eedd0ff5f297c846bc6f683f11c386e, type: 3}
+      propertyPath: '_shotAudioClips.Array.data[1]'
+      value: 
+      objectReference: {fileID: 8300000, guid: a3f101f62cdf91340b6dfbc4a13dba33, type: 3}
     m_RemovedComponents:
     - {fileID: 8085366504754215541, guid: 3eedd0ff5f297c846bc6f683f11c386e, type: 3}
     m_RemovedGameObjects: []
