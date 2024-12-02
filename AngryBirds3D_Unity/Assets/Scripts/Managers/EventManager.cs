@@ -9,6 +9,8 @@ public static class EventManager
     public static Action OnPrepareGame;
     public static Action OnGameStart;
 
+    public static Action OnGameOver;
+
     public static void InvokeBirdShot()
     {
         OnBirdShot?.Invoke();
@@ -29,5 +31,11 @@ public static class EventManager
     {
         OnGameStart?.Invoke();
         Debugger.Log("Invoked: GameStart");
+    }
+
+    public static void InvokeGameOver()
+    {
+        OnGameOver?.Invoke();
+        Debugger.Log("Invoked: GameOver");
     }
 }

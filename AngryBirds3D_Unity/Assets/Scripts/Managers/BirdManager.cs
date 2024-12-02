@@ -28,6 +28,8 @@ public class BirdManager : MonoBehaviour
     [Header("Spawn")]
     [SerializeField] private BirdType _startingBird = BirdType.Red;
     [SerializeField] private CameraController _camController;
+    [SerializeField] private float _birdsToSpawn;
+    private float _birdsToUse = 5;
 
     private void OnEnable()
     {
@@ -49,6 +51,7 @@ public class BirdManager : MonoBehaviour
     private void Start()
     {
         InitializePool();
+        _birdsToUse = _birdsToSpawn;
     }
 
     #region Pool Management
@@ -85,6 +88,11 @@ public class BirdManager : MonoBehaviour
     }
     public Bird GetBirdFromPool(int birdType)
     {
+        if (_birdsToUse <= 0)
+        {
+            EventManager.InvokeGameOver();
+            return null;
+        }
         for (int i = 0; i < _pool.Count; i++)
         {
             if (_pool[i].BirdType != (BirdType)birdType)
@@ -98,19 +106,20 @@ public class BirdManager : MonoBehaviour
                 bird.BirdManager = this;
                 bird.AnchorGO = gameObject; // set the anchor for the bird.
                 bird.Rb.isKinematic = true;
-
+                _birdsToUse--;
+                _pool.Remove(bird);
                 return bird;
             }
         }
 
         // if no bird in pool, create a new one
         Bird newBird = Instantiate(_prefabs[birdType], transform);
-        _pool.Add(newBird);
         newBird.gameObject.SetActive(true);
         newBird.transform.SetParent(null);
         newBird.BirdManager = this;
         newBird.AnchorGO = gameObject; // set the anchor for the bird.
         newBird.Rb.isKinematic = true;
+        _birdsToUse--;
         return newBird;
     }
     public Bird GetBirdFromPool(BirdType birdType)
@@ -144,6 +153,8 @@ public class BirdManager : MonoBehaviour
     public Bird SpawnBird(int birdType)
     {
         Bird bird = GetBirdFromPool(birdType);
+        if (bird == null) return null;
+
         bird.Rb.isKinematic = true;
 
         Vector3 position = _anchorRb.position;

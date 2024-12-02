@@ -1,11 +1,13 @@
 using System;
 using System.Collections;
-using Unity.Cinemachine;
 using UnityEngine;
 
 public class LevelManager : MonoBehaviour
 {
     [SerializeField] private BirdManager _birdManager;
+
+    [Header("Game Loop")]
+    [SerializeField] private GameObject _gameOverCanvas;
 
     [Header("Environment Tint")]
     [SerializeField] private Color _environmentTint = new(123, 123, 123, 255);
@@ -20,6 +22,14 @@ public class LevelManager : MonoBehaviour
     private void Start()
     {
         StartGame();
+    }
+    private void OnEnable()
+    {
+        EventManager.OnGameOver += OnGameOver;
+    }
+    private void OnDisable()
+    {
+        EventManager.OnGameOver -= OnGameOver;
     }
     private void OnApplicationQuit()
     {
@@ -65,5 +75,10 @@ public class LevelManager : MonoBehaviour
     public void StartGame()
     {
         StartCoroutine(StartGameRoutine());
+    }
+
+    private void OnGameOver()
+    {
+        _gameOverCanvas.SetActive(true);
     }
 }
