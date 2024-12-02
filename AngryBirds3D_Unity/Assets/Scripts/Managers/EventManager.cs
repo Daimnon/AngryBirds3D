@@ -12,22 +12,22 @@ public static class EventManager
     public static void InvokeBirdShot()
     {
         OnBirdShot?.Invoke();
-        Debug.Log("Invoked: BirdShot");
+        Debugger.Log("Invoked: BirdShot");
     }
     public static void InvokeBirdHit()
     {
         OnBirdHit?.Invoke();
-        Debug.Log("Invoked: BirdHit");
+        Debugger.Log("Invoked: BirdHit");
     }
 
     public static void InvokePrepareGame()
     {
         OnPrepareGame?.Invoke();
-        Debug.Log("Invoked: PrepareGame");
+        Debugger.Log("Invoked: PrepareGame");
     }
     public static void InvokeGameStart()
     {
         OnGameStart?.Invoke();
-        Debug.Log("Invoked: GameStart");
+        Debugger.Log("Invoked: GameStart");
     }
 }

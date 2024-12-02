@@ -3,8 +3,10 @@ using System.Collections;
 using Unity.Cinemachine;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class LevelManager : MonoBehaviour
 {
+    [SerializeField] private BirdManager _birdManager;
+
     [Header("Environment Tint")]
     [SerializeField] private Color _environmentTint = new(123, 123, 123, 255);
     [SerializeField] private Material _material;
@@ -15,8 +17,10 @@ public class GameManager : MonoBehaviour
     [Header("Camera Transitions")]
     [SerializeField] private CameraController _camController;
 
-    
-
+    private void Start()
+    {
+        StartGame();
+    }
     private void OnApplicationQuit()
     {
         _material.color = Color.white;
@@ -46,7 +50,11 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(_preperationDuration);
 
         // second transition
-        _camController.SetNewFollowBird();
+        while (!_birdManager.ReadyBird)
+        {
+            yield return null;
+        }
+        _camController.SetNewFollowTarget(_birdManager);
         yield return new WaitForSeconds(_startGameCamDelay);
 
         _camController.SetGameCamera();

@@ -1,10 +1,11 @@
+using TMPro;
 using UnityEngine;
 
 public class MainMenu : MonoBehaviour, ISaveable
 {
     [SerializeField] private ASyncLoader _loader;
     [SerializeField] private AudioSource _audioSource;
-    private int _lastScore = 0;
+    [SerializeField] private TextMeshProUGUI _lastScoreTMP;
 
     public void MoveToLevel()
     {
@@ -17,10 +18,10 @@ public class MainMenu : MonoBehaviour, ISaveable
 
     public void LoadData(GameData gameData)
     {
-        _lastScore = gameData.Score;
+        _lastScoreTMP.text = "Last Score:      " + gameData.Score.ToString();
     }
     public void SaveData(ref GameData gameData)
     {
-        gameData.Score = _lastScore;
+        
     }
 }

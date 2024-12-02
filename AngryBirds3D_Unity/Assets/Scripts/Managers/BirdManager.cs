@@ -17,9 +17,6 @@ public enum BirdType
 [RequireComponent(typeof(Rigidbody))]
 public class BirdManager : MonoBehaviour
 {
-    private static BirdManager _instance = null;
-    public static BirdManager Instance => _instance;
-
     [Header("Pool")]
     [SerializeField] private Bird[] _prefabs;
     public Bird[] Prefabs => _prefabs;
@@ -47,11 +44,6 @@ public class BirdManager : MonoBehaviour
 
     private void Awake()
     {
-        if (_instance != null && _instance != this)
-            Destroy(this);
-        else
-            _instance = this;
-
         _pool = new List<Bird>();
     }
     private void Start()
@@ -71,6 +63,7 @@ public class BirdManager : MonoBehaviour
             {
                 Bird newBird = Instantiate(_prefabs[i], transform);
                 newBird.gameObject.SetActive(false);
+                newBird.BirdManager = this;
                 newBird.AnchorGO = gameObject;
                 newBird.AnchorJoint.connectedBody = _anchorRb;
                 newBird.Rb.isKinematic = true;
@@ -79,6 +72,17 @@ public class BirdManager : MonoBehaviour
         }
     }
 
+    private void TryAddSpringJoint(Bird bird)
+    {
+        if (!bird.AnchorJoint)
+        {
+            SpringJoint newJ = bird.gameObject.AddComponent<SpringJoint>();
+            newJ.spring = 120.0f;
+            bird.AnchorJoint = newJ;
+            bird.AnchorJoint.connectedBody = _anchorRb;
+            //newJ.connectedAnchor = Vector3.zero;
+        }
+    }
     public Bird GetBirdFromPool(int birdType)
     {
         for (int i = 0; i < _pool.Count; i++)
@@ -91,13 +95,8 @@ public class BirdManager : MonoBehaviour
             {
                 bird.gameObject.SetActive(true);
                 bird.transform.SetParent(null);
+                bird.BirdManager = this;
                 bird.AnchorGO = gameObject; // set the anchor for the bird.
-                if (!bird.AnchorJoint)
-                {
-                    SpringJoint newJ = gameObject.AddComponent<SpringJoint>();
-                    newJ.spring = 120.0f;
-                    bird.AnchorJoint = newJ;
-                }
                 bird.Rb.isKinematic = true;
 
                 return bird;
@@ -109,55 +108,14 @@ public class BirdManager : MonoBehaviour
         _pool.Add(newBird);
         newBird.gameObject.SetActive(true);
         newBird.transform.SetParent(null);
+        newBird.BirdManager = this;
         newBird.AnchorGO = gameObject; // set the anchor for the bird.
-        if (!newBird.AnchorJoint)
-        {
-            SpringJoint newJ = gameObject.AddComponent<SpringJoint>();
-            newJ.spring = 120.0f;
-            newBird.AnchorJoint = newJ;
-        }
         newBird.Rb.isKinematic = true;
         return newBird;
     }
     public Bird GetBirdFromPool(BirdType birdType)
     {
-        for (int i = 0; i < _pool.Count; i++)
-        {
-            if (_pool[i].BirdType != birdType)
-                continue;
-
-            Bird bird = _pool[i];
-            if (!bird.gameObject.activeSelf)
-            {
-                bird.gameObject.SetActive(true);
-                bird.transform.SetParent(null);
-                bird.AnchorGO = gameObject; // set the anchor for the bird.
-                if (!bird.AnchorJoint)
-                {
-                    SpringJoint newJ = gameObject.AddComponent<SpringJoint>();
-                    newJ.spring = 120.0f;
-                    bird.AnchorJoint = newJ;
-                }
-                bird.Rb.isKinematic = true;
-
-                return bird;
-            }
-        }
-
-        // if no bird in pool, create a new one
-        Bird newBird = Instantiate(_prefabs[(int)birdType], transform);
-        _pool.Add(newBird);
-        newBird.gameObject.SetActive(true);
-        newBird.transform.SetParent(null);
-        newBird.AnchorGO = gameObject; // set the anchor for the bird.
-        if (!newBird.AnchorJoint)
-        {
-            SpringJoint newJ = gameObject.AddComponent<SpringJoint>();
-            newJ.spring = 120.0f;
-            newBird.AnchorJoint = newJ;
-        }
-        newBird.Rb.isKinematic = true;
-        return newBird;
+        return GetBirdFromPool((int)birdType);
     }
 
     public void ReturnBirdToPool(Bird bird)
@@ -166,13 +124,15 @@ public class BirdManager : MonoBehaviour
         bird.gameObject.SetActive(false);
         bird.transform.SetParent(transform);
         bird.transform.position = Vector3.zero;
-        if (!bird.AnchorJoint)
+        /*if (!bird.AnchorJoint)
         {
             SpringJoint newJ = bird.gameObject.AddComponent<SpringJoint>();
             newJ.spring = 120.0f;
             bird.AnchorJoint = newJ;
             newJ.connectedBody = _anchorRb;
-        }
+            newJ.connectedAnchor = Vector3.zero;
+        }*/
+        bird.BirdManager = this;
         _pool.Add(bird);
 
         int prefabIndex = UnityEngine.Random.Range(0, _prefabs.Length);
@@ -190,20 +150,15 @@ public class BirdManager : MonoBehaviour
         position.y += 0.5f;
         Quaternion quaternion = Quaternion.Euler(new Vector3(0.0f, 90.0f, 0.0f)); // so birds look to the right
         bird.transform.SetLocalPositionAndRotation(position, quaternion);
+
+        TryAddSpringJoint(bird);
+
         _readyBird = bird;
         return bird;
     }
     public Bird SpawnBird(BirdType birdType)
     {
-        Bird bird = GetBirdFromPool(birdType);
-        bird.Rb.isKinematic = true;
-
-        Vector3 position = _anchorRb.position;
-        position.y += 0.5f;
-        Quaternion quaternion = Quaternion.Euler(new Vector3(0.0f, 90.0f, 0.0f)); // so birds look to the right
-        bird.transform.SetLocalPositionAndRotation(position, quaternion);
-        _readyBird = bird;
-        return bird;
+        return SpawnBird((int)birdType);
     }
     #endregion
 

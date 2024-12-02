@@ -2,11 +2,18 @@
 public class GameData
 {
     // settings
-    public bool IsSoundOn { get; set; }
+    public bool IsSoundOn;
 
     // account
-    public int Score { get; set; }
+    public int Score;
 
     // quests
-    public SerializableDictionary<int, bool> QuestsCompleted { get; set; }
+    public SerializableDictionary<int, bool> QuestsCompleted;
+
+    public GameData()
+    {
+        IsSoundOn = true;
+        Score = 0;
+        QuestsCompleted = new SerializableDictionary<int, bool>();
+    }
 }

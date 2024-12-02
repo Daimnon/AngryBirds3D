@@ -21,6 +21,9 @@ public class Bird : MonoBehaviour
 
     [SerializeField] private Rigidbody _rb;
     public Rigidbody Rb => _rb;
+
+    private BirdManager _birdManager;
+    public BirdManager BirdManager { get => _birdManager; set => _birdManager = value; }
     #endregion
 
     #region Serialized Members
@@ -52,13 +55,17 @@ public class Bird : MonoBehaviour
     #region Monobehaviour Callbacks
     private void OnEnable()
     {
+        _wasShot = false;
         _isHit = false;
+        _rb.angularVelocity = Vector3.zero;
+
         EnableInputs();
         PlaySpawnSound();
     }
     private void OnDisable()
     {
         DisableInputs();
+        _wasShot = false;
         _isHit = false;
     }
     private void Awake()
@@ -82,7 +89,7 @@ public class Bird : MonoBehaviour
             _deathTimer -= Time.deltaTime;
             if (_deathTimer <= 0)
             {
-                BirdManager.Instance.ReturnBirdToPool(this);
+                _birdManager.ReturnBirdToPool(this);
             }
         }
     }
@@ -116,6 +123,8 @@ public class Bird : MonoBehaviour
     #region Inputs Logic
     private void OnPointerClick(InputAction.CallbackContext context)
     {
+        if (_wasShot) return;
+
         float distance = Mathf.Abs(_mainCam.transform.position.z) + 1;
         Vector3 origin = _mainCam.ScreenToWorldPoint(_pointerPos);
         Vector3 direction = (origin - _mainCam.transform.position).normalized;
@@ -130,6 +139,8 @@ public class Bird : MonoBehaviour
     }
     private void OnPointerRelease(InputAction.CallbackContext context)
     {
+        if (_wasShot) return;
+
         StopAiming();
     }
     #endregion
@@ -139,7 +150,7 @@ public class Bird : MonoBehaviour
     {
         if (!_anchorJoint)
         {
-            Debug.Log("No anchor connected to bird");
+            Debugger.Log("No anchor connected to bird");
             yield break;
         }
 
@@ -153,7 +164,6 @@ public class Bird : MonoBehaviour
             targetPos = _mainCam.ScreenToWorldPoint(targetPos);
 
             bool isWithinDragDistance = Vector3.Distance(targetPos, _anchorJoint.connectedBody.position) > _dragDistanceFromAnchor;
-            Debug.Log(targetPos + "," + _anchorJoint.connectedBody.position + "," + _dragDistanceFromAnchor);
             Vector3 clampedTargetPos = _anchorJoint.connectedBody.position + (targetPos - _anchorJoint.connectedBody.position).normalized * _dragDistanceFromAnchor;
 
             transform.position = isWithinDragDistance ? clampedTargetPos : targetPos;
@@ -227,6 +237,11 @@ public class Bird : MonoBehaviour
         Vector3 newScale = feathersVFX.transform.localScale;
         newScale *= 1.0f + 1.0f / impactForce;
         feathersVFX.transform.localScale = newScale;
+
+        ScoreManager scoreManager = ScoreManager.Instance;
+        scoreManager.AddScore(20); // temp arbitrary score
+        AnalyticsManager.Instance.UpdateScore(scoreManager.Score);
+
         _isHit = true;
     }
 
@@ -250,9 +265,9 @@ public class Bird : MonoBehaviour
     #region Testings
     private void TestMousePos(Vector2 pointerPos)
     {
-        Debug.Log(pointerPos);
-        Debug.Log(Camera.main.ScreenPointToRay(pointerPos));
-        Debug.Log(Camera.main.ScreenPointToRay(Mouse.current.position.value));
+        Debugger.Log(pointerPos);
+        Debugger.Log(Camera.main.ScreenPointToRay(pointerPos));
+        Debugger.Log(Camera.main.ScreenPointToRay(Mouse.current.position.value));
     }
 
     [ContextMenu("Do Impact Animation")]

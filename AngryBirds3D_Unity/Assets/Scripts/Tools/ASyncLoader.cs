@@ -17,6 +17,7 @@ public class ASyncLoader : MonoBehaviour
     [SerializeField] private GameObject _loadingScreen;
     [SerializeField] private TextMeshProUGUI _precentageText;
     [SerializeField] private GameObject _objectToDeactivate;
+    [SerializeField] private float _loadingDelay = 0.5f;
     [SerializeField] private bool _isTitleScreen = false;
     /* For testings only!
     [SerializeField][Range(0.0f, 1.0f)] private float _testValue;
@@ -28,17 +29,23 @@ public class ASyncLoader : MonoBehaviour
     private void Start()
     {
         if (_isTitleScreen) LoadLevel(LevelType.MainMenu);
+        Debugger.Log("Started Title");
+        Debug.developerConsoleVisible = true;
     }
 
     private IEnumerator LoadLevelASync(int levelType)
     {
+        yield return new WaitForSeconds(_loadingDelay);
         AsyncOperation loadOperation = SceneManager.LoadSceneAsync(levelType);
+        Debugger.Log("Started Loading...");
         while (!loadOperation.isDone)
         {
+            Debugger.Log("Loading...");
             float progressValue = Mathf.Clamp01(loadOperation.progress / 0.9f);
             UpdateProgress(progressValue);
             yield return null;
         }
+        Debugger.Log("Finished Loading...");
     }
     private void UpdateProgress(float progressValue)
     {
@@ -54,7 +61,7 @@ public class ASyncLoader : MonoBehaviour
     public void LoadLevel(int levelType)
     {
         _loadingScreen.SetActive(true);
-        _objectToDeactivate.SetActive(false);
+        if (_objectToDeactivate) _objectToDeactivate.SetActive(false);
 
         StartCoroutine(LoadLevelASync(levelType));
     }
@@ -66,7 +73,7 @@ public class ASyncLoader : MonoBehaviour
     public void LoadLevel(LevelType levelType)
     {
         _loadingScreen.SetActive(true);
-        _objectToDeactivate.SetActive(false);
+        if (_objectToDeactivate) _objectToDeactivate.SetActive(false);
 
         StartCoroutine(LoadLevelASync((int)levelType));
     }

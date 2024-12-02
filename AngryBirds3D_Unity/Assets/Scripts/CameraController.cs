@@ -27,9 +27,8 @@ public class CameraController : MonoBehaviour
         _gameCam.Priority = 2;
     }
 
-    private IEnumerator FollowBirdRoutine()
+    private IEnumerator FollowBirdRoutine(BirdManager bManager)
     {
-        BirdManager bManager = BirdManager.Instance;
         while (!bManager.ReadyBird)
         {
             yield return null;
@@ -40,11 +39,10 @@ public class CameraController : MonoBehaviour
     /// Start a courotine which will attemp to get the ReadyBird
     /// from the BirdManager until it succeded.
     /// </summary>
-    public void SetNewFollowBird()
+    public void SetNewFollowTarget(BirdManager bManager)
     {
-        StartCoroutine(FollowBirdRoutine());
+        StartCoroutine(FollowBirdRoutine(bManager));
     }
-
     public void SetNewFollowTarget(Bird readyBird)
     {
         _gameCam.Target.TrackingTarget = readyBird.transform;
