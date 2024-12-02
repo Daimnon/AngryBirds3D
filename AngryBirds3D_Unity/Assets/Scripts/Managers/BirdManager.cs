@@ -47,8 +47,10 @@ public class BirdManager : MonoBehaviour
 
     private void Awake()
     {
-        if (!_instance) _instance = this;
-        else Destroy(gameObject);
+        if (_instance != null && _instance != this)
+            Destroy(this);
+        else
+            _instance = this;
 
         _pool = new List<Bird>();
     }
@@ -174,14 +176,12 @@ public class BirdManager : MonoBehaviour
         _pool.Add(bird);
 
         int prefabIndex = UnityEngine.Random.Range(0, _prefabs.Length);
-        SpawnBird(prefabIndex);
-
-        _camController.SetNewFollowBird();
+        _camController.SetNewFollowTarget(SpawnBird(prefabIndex));
     }
     #endregion
 
     #region Spawn Management
-    public void SpawnBird(int birdType)
+    public Bird SpawnBird(int birdType)
     {
         Bird bird = GetBirdFromPool(birdType);
         bird.Rb.isKinematic = true;
@@ -191,8 +191,9 @@ public class BirdManager : MonoBehaviour
         Quaternion quaternion = Quaternion.Euler(new Vector3(0.0f, 90.0f, 0.0f)); // so birds look to the right
         bird.transform.SetLocalPositionAndRotation(position, quaternion);
         _readyBird = bird;
+        return bird;
     }
-    public void SpawnBird(BirdType birdType)
+    public Bird SpawnBird(BirdType birdType)
     {
         Bird bird = GetBirdFromPool(birdType);
         bird.Rb.isKinematic = true;
@@ -202,6 +203,7 @@ public class BirdManager : MonoBehaviour
         Quaternion quaternion = Quaternion.Euler(new Vector3(0.0f, 90.0f, 0.0f)); // so birds look to the right
         bird.transform.SetLocalPositionAndRotation(position, quaternion);
         _readyBird = bird;
+        return bird;
     }
     #endregion
 

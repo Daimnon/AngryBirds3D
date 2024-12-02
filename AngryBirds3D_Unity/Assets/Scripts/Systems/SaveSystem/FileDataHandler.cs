@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.IO;
-using UnityEngine.Playables;
 
 public class FileDataHandler
 {
@@ -43,7 +42,6 @@ public class FileDataHandler
         }
         return loadedData;
     }
-
     public void Save(GameData gameData)
     {
         string fullPath = Path.Combine(_dataDirPath, _dataFileName);

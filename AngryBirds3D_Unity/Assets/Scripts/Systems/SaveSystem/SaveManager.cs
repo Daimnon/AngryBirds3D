@@ -14,7 +14,7 @@ public class SaveManager : MonoBehaviour
     private List<ISaveable> _saveables = new();
 
     [Header("File Storage Config")]
-    [SerializeField] private string _fileName;
+    [SerializeField] private string _fileName = "Save";
     private FileDataHandler _fileDataHandler;
 
     private void Awake()
@@ -26,7 +26,7 @@ public class SaveManager : MonoBehaviour
     }
     private void Start()
     {
-        _fileDataHandler = new FileDataHandler(Application.persistentDataPath + "/", _fileName);
+        _fileDataHandler = new FileDataHandler(Application.persistentDataPath + "/", _fileName + ".json");
         _saveables = FindAllSaveables();
         LoadGame();
     }
@@ -74,7 +74,7 @@ public class SaveManager : MonoBehaviour
     [ContextMenu("Reset SaveFile")]
     private void ResetSaveFile()
     {
-        string path = Application.persistentDataPath + "/" + _fileName;
+        string path = Application.persistentDataPath + "/" + _fileName + ".json";
         System.IO.File.Delete(path);
     }
 }

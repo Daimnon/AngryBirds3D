@@ -44,4 +44,9 @@ public class CameraController : MonoBehaviour
     {
         StartCoroutine(FollowBirdRoutine());
     }
+
+    public void SetNewFollowTarget(Bird readyBird)
+    {
+        _gameCam.Target.TrackingTarget = readyBird.transform;
+    }
 }

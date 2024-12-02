@@ -2,11 +2,11 @@
 public class GameData
 {
     // settings
-    public bool IsSoundOn;
+    public bool IsSoundOn { get; set; }
 
     // account
-    public int Currency;
+    public int Score { get; set; }
 
     // quests
-    public SerializableDictionary<int, bool> QuestsCompleted;
+    public SerializableDictionary<int, bool> QuestsCompleted { get; set; }
 }
