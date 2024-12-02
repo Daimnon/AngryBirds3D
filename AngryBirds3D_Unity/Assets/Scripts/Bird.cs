@@ -42,11 +42,13 @@ public class Bird : MonoBehaviour
     #region Monobehaviour Callbacks
     private void OnEnable()
     {
+        _isHit = false;
         EnableInputs();
     }
     private void OnDisable()
     {
         DisableInputs();
+        _isHit = false;
     }
     private void Awake()
     {
@@ -63,7 +65,6 @@ public class Bird : MonoBehaviour
     {
         _pointerPos = _pointer.position.value;
         _pointerPos.z = _mainCam.nearClipPlane;
-        Debug.Log(_pointerPos);
 
         if (_isHit)
         {
@@ -141,6 +142,7 @@ public class Bird : MonoBehaviour
             targetPos = _mainCam.ScreenToWorldPoint(targetPos);
 
             bool isWithinDragDistance = Vector3.Distance(targetPos, _anchorJoint.connectedBody.position) > _dragDistanceFromAnchor;
+            Debug.Log(targetPos + "," + _anchorJoint.connectedBody.position + "," + _dragDistanceFromAnchor);
             Vector3 clampedTargetPos = _anchorJoint.connectedBody.position + (targetPos - _anchorJoint.connectedBody.position).normalized * _dragDistanceFromAnchor;
 
             transform.position = isWithinDragDistance ? clampedTargetPos : targetPos;
@@ -192,23 +194,27 @@ public class Bird : MonoBehaviour
         _deathTimer = _timeToDie;
         PlayImpactSound();
 
-        for (int i = 0; i < _animators.Length; i++)
+        if (_birdType == BirdType.Red) // play red animation
         {
-            _animators[i].SetTrigger("Impact");
+            for (int i = 0; i < _animators.Length; i++)
+            {
+                _animators[i].SetTrigger("Impact");
+            }
         }
 
         Vector3 collisionImpulse = collision.impulse;
         float impactForce = collisionImpulse.magnitude / Time.fixedDeltaTime;
 
+        // set impact vfx direction to the opposite force
         ContactPoint contactPoint = collision.GetContact(0);
         Quaternion quaternion = Quaternion.LookRotation(contactPoint.normal); // calculate rotation based on reversed impact direction
         ParticleSystem feathersVFX = Instantiate(_feathersImpactVFX, contactPoint.point, quaternion);
+
+        // set feathersVXF size according to the force of impact
         Vector3 newScale = feathersVFX.transform.localScale;
         newScale *= 1.0f + 1.0f / impactForce;
         feathersVFX.transform.localScale = newScale;
         _isHit = true;
-
-        Destroy(feathersVFX, 0.5f);
     }
     private void PlayImpactSound()
     {

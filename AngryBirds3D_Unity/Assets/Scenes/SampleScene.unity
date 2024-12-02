@@ -694,7 +694,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _prefabs:
   - {fileID: 5832063593119386744, guid: 955b639b92931fe45affd2737055e174, type: 3}
-  _initialPoolSize: 20
+  - {fileID: 5832063593119386744, guid: eda301196b799c842b7cd0acece1dbd3, type: 3}
+  - {fileID: 5832063593119386744, guid: af3036fc70e8ce24fb02b87417e5d0af, type: 3}
+  _initialPoolSize: 3
   _anchorRb: {fileID: 1782185541}
   _startingBird: 0
 --- !u!1660057539 &9223372036854775807
